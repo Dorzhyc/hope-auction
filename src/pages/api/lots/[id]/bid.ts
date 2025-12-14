@@ -1,3 +1,5 @@
+console.log("BID API HIT", req.method, req.query, req.body);
+
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { getPool } from "@/lib/db";
@@ -16,10 +18,17 @@ function getClientIp(req: NextApiRequest): string | null {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  console.log("BID API HIT", req.method, req.query, req.body);
 
-  const parse = Body.safeParse(req.body);
-  if (!parse.success) return res.status(400).json({ error: "Неверные данные ставки" });
+  try {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    const parse = Body.safeParse(req.body);
+    if (!parse.success) {
+      return res.status(400).json({ error: "Неверные данные ставки" });
+    }
 
   const { email, nickname, amount } = parse.data;
   const pool = getPool();
@@ -117,9 +126,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await client.query("COMMIT");
     return res.status(200).json({ accepted: true, bid_id: bidIns.rows[0].id });
   } catch (e: any) {
-    await client.query("ROLLBACK");
-    return res.status(500).json({ error: "Ошибка сервера при обработке ставки" });
-  } finally {
+  await client.query("ROLLBACK");
+  console.error("BID TX ERROR:", e);
+  return res.status(500).json({ error: e?.message ? e.message : String(e) });
+
+} finally {
     client.release();
   }
+} catch (e: any) {
+  console.error("BID OUTER ERROR:", e);
+  return res.status(500).json({ error: e?.message ? e.message : String(e) });
+}
 }
