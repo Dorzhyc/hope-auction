@@ -117,9 +117,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     `, [amount, lot.id]);
 
     await client.query(`
-      INSERT INTO audit_log(actor, action, payload_json, client_ip)
-      VALUES ('guest', 'bid_accepted', jsonb_build_object('lot_id',$1,'amount',$2,'nickname',$3), $4)
-    `, [lot.id, amount, nickname, ip]);
+  INSERT INTO audit_log(actor, action, payload_json, client_ip)
+  VALUES (
+    'guest',
+    'bid_accepted',
+    jsonb_build_object(
+      'lot_id', $1::int,
+      'amount', $2::int,
+      'nickname', $3::text
+    ),
+    $4::text
+  )
+`, [lot.id, amount, nickname, ip ?? ""]);
 
     await client.query("COMMIT");
     return res.status(200).json({ accepted: true, bid_id: bidIns.rows[0].id });
