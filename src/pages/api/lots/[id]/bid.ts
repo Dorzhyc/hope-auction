@@ -1,5 +1,3 @@
-console.log("BID API HIT", req.method, req.query, req.body);
-
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import { getPool } from "@/lib/db";
