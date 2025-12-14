@@ -128,7 +128,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     ),
     $4::text
   )
-`, [lot.id, amount, nickname, ip ?? ""]);
+`, [lot.id, amount, nickname, ip ?? ""]); 
 
     await client.query("COMMIT");
     return res.status(200).json({ accepted: true, bid_id: bidIns.rows[0].id });
