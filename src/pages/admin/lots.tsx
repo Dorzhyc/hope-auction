@@ -7,6 +7,41 @@ const fetcher = (url: string) => fetch(url).then(async r => {
   return r.json();
 });
 
+function UploadLotImage({ lotId, onDone }: { lotId: number; onDone: () => Promise<any> }) {
+  const [file, setFile] = useState<File | null>(null);
+  const [msg, setMsg] = useState<string>("");
+
+  async function upload() {
+    if (!file) return setMsg("Выбери файл");
+
+    setMsg("Загрузка...");
+    const fd = new FormData();
+    fd.append("lotId", String(lotId));
+    fd.append("file", file);
+
+    const r = await fetch("/api/admin/upload", { method: "POST", body: fd });
+    const j = await r.json();
+
+    if (!r.ok) {
+      setMsg(j?.error || "Ошибка");
+      return;
+    }
+
+    setMsg("Готово ✅");
+    setFile(null);
+    await onDone();
+  }
+
+  return (
+    <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px dashed #ddd" }}>
+      <div style={{ fontWeight: 600, marginBottom: 6 }}>Фото лота</div>
+      <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+      <button onClick={upload} style={{ marginLeft: 8 }}>Загрузить</button>
+      {msg ? <div style={{ marginTop: 6 }}>{msg}</div> : null}
+    </div>
+  );
+}
+
 export default function AdminLots() {
   const { data, mutate } = useSWR("/api/admin/lots", fetcher);
   const [title, setTitle] = useState("");
@@ -64,6 +99,8 @@ export default function AdminLots() {
                 </button>
                 <button onClick={() => toggleStatus(l.id, "ended")}>Завершить лот</button>
               </div>
+
+              <UploadLotImage lotId={l.id} onDone={mutate} />
             </div>
           ))}
         </div>
