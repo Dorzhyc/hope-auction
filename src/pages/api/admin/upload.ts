@@ -6,36 +6,36 @@ export const config = {
   api: { bodyParser: false },
 };
 
-async function readFormData(req: NextApiRequest): Promise<{ lotId: string; file: File }> {
+async function readFormData(req: NextApiRequest): Promise<{ lotId: string; file: any }> {
   const ct = req.headers["content-type"] || "";
   if (!ct.includes("multipart/form-data")) {
     throw new Error("Expected multipart/form-data");
   }
 
-  // В Next 14 (pages API) удобно использовать Web API: Request.formData()
-  // Собираем URL (он не используется реально, но нужен конструктору Request)
   const url = `http://${req.headers.host}/api/admin/upload`;
+
   const r = new Request(
-  url,
-  {
-    method: "POST",
-    headers: req.headers as any,
-    body: req as any,
-    // duplex нужен Node/undici, в типах его пока нет
-    duplex: "half",
-  } as any
-);
+    url,
+    {
+      method: "POST",
+      headers: req.headers as any,
+      body: req as any,
+      // важно для Node 18 / undici
+      duplex: "half",
+    } as any
+  );
 
   const fd = await r.formData();
 
   const lotId = String(fd.get("lotId") || "");
-  const file = fd.get("file");
+  const file = fd.get("file") as any;
 
   if (!lotId) throw new Error("lotId is required");
-  if (!(file instanceof File)) throw new Error("file is required");
+  if (!file) throw new Error("file is required");
 
   return { lotId, file };
 }
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -73,5 +73,6 @@ if (!ok) return res.status(401).json({ error: "unauthorized" });
     return res.status(500).json({ error: e?.message ? e.message : String(e) });
   }
 }
+
 
 
