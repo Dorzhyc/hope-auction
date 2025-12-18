@@ -22,8 +22,10 @@ function UploadLotImage({ lotId, onDone }: { lotId: number; onDone: () => Promis
    const r = await fetch("/api/admin/upload", {
   method: "POST",
   body: fd,
-  duplex: "half" as any,
-});
+  // @ts-ignore – duplex ещё нет в типах, но браузер его понимает
+  duplex: "half",
+} as any);
+
 
     const j = await r.json();
 
