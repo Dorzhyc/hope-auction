@@ -19,7 +19,12 @@ function UploadLotImage({ lotId, onDone }: { lotId: number; onDone: () => Promis
     fd.append("lotId", String(lotId));
     fd.append("file", file);
 
-    const r = await fetch("/api/admin/upload", { method: "POST", body: fd });
+   const r = await fetch("/api/admin/upload", {
+  method: "POST",
+  body: fd,
+  duplex: "half" as any,
+});
+
     const j = await r.json();
 
     if (!r.ok) {
