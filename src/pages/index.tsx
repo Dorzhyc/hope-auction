@@ -27,6 +27,20 @@ export default function Home() {
           {data.lots.map((lot: any) => (
             <Link key={lot.id} href={`/lots/${lot.id}`} style={{ textDecoration: "none", color: "inherit" }}>
               <div style={{ border: "1px solid #ddd", borderRadius: 10, padding: 12 }}>
+ {lot.images && (
+        <img
+          src={lot.images}
+          alt={lot.title}
+          style={{
+            width: "100%",
+            height: 160,
+            objectFit: "cover",
+            borderRadius: 8,
+            marginBottom: 8
+          }}
+        />
+      )}
+                
                 <div style={{ fontWeight: 700, marginBottom: 8 }}>{lot.title}</div>
                 <div>Текущая цена: <b>{lot.current_price} ₽</b></div>
                 <div>Ставок: <b>{lot.bids_count}</b></div>
