@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabaseAdmin, SUPABASE_BUCKET } from "@/lib/supabaseServer";
 import { getAdminCookie, isAdmin } from "@/lib/adminAuth";
+import { getPool } from "@/lib/db";
+
 
 export const config = {
   api: { bodyParser: false },
@@ -66,6 +68,13 @@ if (!ok) return res.status(401).json({ error: "unauthorized" });
     // публичная ссылка
     const pub = supabaseAdmin.storage.from(SUPABASE_BUCKET).getPublicUrl(path);
     const url = pub.data.publicUrl;
+    // Сохраняем URL в таблицу lots (в колонку images)
+const pool = getPool();
+await pool.query(
+  "UPDATE lots SET images = $2, updated_at = now() WHERE id = $1",
+  [Number(lotId), url]
+);
+
 
     return res.status(200).json({ ok: true, url, path });
   } catch (e: any) {
@@ -73,6 +82,7 @@ if (!ok) return res.status(401).json({ error: "unauthorized" });
     return res.status(500).json({ error: e?.message ? e.message : String(e) });
   }
 }
+
 
 
 
