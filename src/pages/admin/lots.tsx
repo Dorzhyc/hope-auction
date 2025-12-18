@@ -19,12 +19,12 @@ function UploadLotImage({ lotId, onDone }: { lotId: number; onDone: () => Promis
     fd.append("lotId", String(lotId));
     fd.append("file", file);
 
-   const r = await fetch("/api/admin/upload", {
+   // заставляем TypeScript «забыть» про типы fetch
+const r = await (fetch as any)("/api/admin/upload", {
   method: "POST",
   body: fd,
-  // @ts-ignore – duplex ещё нет в типах, но браузер его понимает
   duplex: "half",
-} as any);
+});
 
 
     const j = await r.json();
