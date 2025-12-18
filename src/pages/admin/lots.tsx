@@ -19,12 +19,11 @@ function UploadLotImage({ lotId, onDone }: { lotId: number; onDone: () => Promis
     fd.append("lotId", String(lotId));
     fd.append("file", file);
 
-   // заставляем TypeScript «забыть» про типы fetch
-const r = await (fetch as any)("/api/admin/upload", {
+const r = await fetch("/api/admin/upload", {
   method: "POST",
   body: fd,
-  duplex: "half",
 });
+
 
 
     const j = await r.json();
