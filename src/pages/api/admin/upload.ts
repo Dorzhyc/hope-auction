@@ -7,21 +7,23 @@ export const config = {
   api: { bodyParser: false },
 };
 
-async function readFormData(
-  req: NextApiRequest
-): Promise<{ lotId: string; file: File }> {
+async function readFormData(req: NextApiRequest): Promise<{ lotId: string; file: File }> {
   const ct = req.headers["content-type"] || "";
   if (!ct.includes("multipart/form-data")) {
     throw new Error("Expected multipart/form-data");
   }
 
-  // Собираем formData через Web-API Request
   const url = `http://${req.headers.host}/api/admin/upload`;
+
+  // ВАЖНО: добавить duplex: "half"
   const r = new Request(url, {
     method: "POST",
     headers: req.headers as any,
     body: req as any,
-  });
+    // @ts-ignore – в типах RequestInit ещё нет duplex, но Node 18 его требует
+    duplex: "half",
+  } as any);
+
   const fd = await r.formData();
 
   const lotId = String(fd.get("lotId") || "");
@@ -86,4 +88,5 @@ const ok = await isAdmin(token);
       .json({ error: e?.message ? e.message : String(e) });
   }
 }
+
 
