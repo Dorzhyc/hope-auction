@@ -1,56 +1,54 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabaseAdmin, SUPABASE_BUCKET } from "@/lib/supabaseServer";
-import { getAdminCookie, isAdmin } from "@/lib/adminAuth";
+import { isAdminRequest } from "@/lib/adminAuth";
 import { getPool } from "@/lib/db";
-
 
 export const config = {
   api: { bodyParser: false },
 };
 
-async function readFormData(req: NextApiRequest): Promise<{ lotId: string; file: any }> {
+async function readFormData(
+  req: NextApiRequest
+): Promise<{ lotId: string; file: File }> {
   const ct = req.headers["content-type"] || "";
   if (!ct.includes("multipart/form-data")) {
     throw new Error("Expected multipart/form-data");
   }
 
+  // Собираем formData через Web-API Request
   const url = `http://${req.headers.host}/api/admin/upload`;
-
-  const r = new Request(
-    url,
-    {
-      method: "POST",
-      headers: req.headers as any,
-      body: req as any,
-      // важно для Node 18 / undici
-      duplex: "half",
-    } as any
-  );
-
+  const r = new Request(url, {
+    method: "POST",
+    headers: req.headers as any,
+    body: req as any,
+  });
   const fd = await r.formData();
 
   const lotId = String(fd.get("lotId") || "");
-  const file = fd.get("file") as any;
+  const file = fd.get("file");
 
   if (!lotId) throw new Error("lotId is required");
-  if (!file) throw new Error("file is required");
+  if (!(file instanceof File)) throw new Error("file is required");
 
   return { lotId, file };
 }
 
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
-    if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
 
-    // Проверка админ-доступа (как у тебя уже сделано в админке)
-    const token = getAdminCookie(req as any);
-const ok = await isAdmin(token);
-if (!ok) return res.status(401).json({ error: "unauthorized" });
+    // проверка админа
+    const ok = await isAdminRequest(req);
+    if (!ok) return res.status(403).json({ error: "Нет доступа" });
 
     const { lotId, file } = await readFormData(req);
 
-    // имя файла в bucket
+    // путь в бакете
     const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
     const path = `lots/${lotId}/${Date.now()}.${ext}`;
 
@@ -65,24 +63,24 @@ if (!ok) return res.status(401).json({ error: "unauthorized" });
 
     if (up.error) throw up.error;
 
-    // публичная ссылка
-    const pub = supabaseAdmin.storage.from(SUPABASE_BUCKET).getPublicUrl(path);
+    // публичный URL из Supabase
+    const pub = supabaseAdmin.storage
+      .from(SUPABASE_BUCKET)
+      .getPublicUrl(path);
     const url = pub.data.publicUrl;
-    // Сохраняем URL в таблицу lots (в колонку images)
-const pool = getPool();
-await pool.query(
-  "UPDATE lots SET images = $2, updated_at = now() WHERE id = $1",
-  [Number(lotId), url]
-);
 
+    // 🔴 ВАЖНО: сохраняем URL в таблицу lots.images
+    const pool = getPool();
+    await pool.query(
+      `UPDATE lots SET images = $1, updated_at = now() WHERE id = $2`,
+      [url, Number(lotId)]
+    );
 
     return res.status(200).json({ ok: true, url, path });
   } catch (e: any) {
     console.error("UPLOAD ERROR:", e);
-    return res.status(500).json({ error: e?.message ? e.message : String(e) });
+    return res
+      .status(500)
+      .json({ error: e?.message ? e.message : String(e) });
   }
 }
-
-
-
-
