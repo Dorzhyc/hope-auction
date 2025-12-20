@@ -45,6 +45,22 @@ export default function LotPage() {
     <main style={{ maxWidth: 980, margin: "0 auto", padding: 16, fontFamily: "system-ui" }}>
       <button onClick={() => router.push("/")}>← назад</button>
       <h1 style={{ marginTop: 12 }}>{data.lot.title}</h1>
+{/* КАРТИНКА ЛОТА */}
+{data.lot.images && (
+  <div style={{ margin: "12px 0" }}>
+    <img
+      src={data.lot.images}
+      alt={data.lot.title}
+      style={{
+        maxWidth: "100%",
+        maxHeight: 400,
+        objectFit: "contain",
+        borderRadius: 8,
+        display: "block"
+      }}
+    />
+  </div>
+)}    
       <p>{data.lot.description}</p>
 
       <div style={{ padding: 12, border: "1px solid #ddd", borderRadius: 8 }}>
