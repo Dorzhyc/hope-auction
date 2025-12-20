@@ -30,10 +30,13 @@ async function readFormData(req: NextApiRequest): Promise<{ lotId: string; file:
   const file = fd.get("file");
 
   if (!lotId) throw new Error("lotId is required");
-  if (!(file instanceof File)) throw new Error("file is required");
+  // в Node нет глобального File, поэтому просто проверяем наличие метода arrayBuffer
+  if (!file || typeof (file as any).arrayBuffer !== "function") {
+    throw new Error("file is required");
+  }
 
-  return { lotId, file };
-}
+  return { lotId, file: file as any };
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -88,5 +91,6 @@ const ok = await isAdmin(token);
       .json({ error: e?.message ? e.message : String(e) });
   }
 }
+
 
 
