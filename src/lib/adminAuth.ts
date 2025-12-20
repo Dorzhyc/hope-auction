@@ -43,9 +43,8 @@ export async function makeAdminToken(): Promise<string> {
   const adminPass = process.env.ADMIN_PASSWORD;
   if (!adminPass) throw new Error("ADMIN_PASSWORD is required");
   return await bcrypt.hash(adminPass, 10);
+  }
 export async function isAdminRequest(req: any): Promise<boolean> {
   const token = getAdminCookie(req);
   return isAdmin(token);
-}
-
 }
