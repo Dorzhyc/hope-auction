@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { supabaseAdmin, SUPABASE_BUCKET } from "@/lib/supabaseServer";
-import { isAdminRequest } from "@/lib/adminAuth";
+import { getAdminCookie, isAdmin } from "@/lib/adminAuth";
 import { getPool } from "@/lib/db";
 
 export const config = {
@@ -43,7 +43,9 @@ export default async function handler(
     }
 
     // проверка админа
-    const ok = await isAdminRequest(req);
+    const token = getAdminCookie(req as any);
+const ok = await isAdmin(token);
+
     if (!ok) return res.status(403).json({ error: "Нет доступа" });
 
     const { lotId, file } = await readFormData(req);
@@ -84,3 +86,4 @@ export default async function handler(
       .json({ error: e?.message ? e.message : String(e) });
   }
 }
+
