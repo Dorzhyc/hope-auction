@@ -40,6 +40,10 @@ export default function LotPage() {
   }
 
   if (!data) return <main style={{ padding: 16, fontFamily: "system-ui" }}>Загрузка...</main>;
+  const firstImage = data.lot.images
+  ? String(data.lot.images).split("\n")[0]
+  : null;
+
 
   return (
     <main style={{ maxWidth: 980, margin: "0 auto", padding: 16, fontFamily: "system-ui" }}>
@@ -62,6 +66,16 @@ export default function LotPage() {
   </div>
 )}    
       <p>{data.lot.description}</p>
+      {firstImage && (
+  <div style={{ margin: "12px 0" }}>
+    <img
+      src={firstImage}
+      alt={data.lot.title}
+      style={{ maxWidth: "100%", borderRadius: 8 }}
+    />
+  </div>
+)}
+
 
       <div style={{ padding: 12, border: "1px solid #ddd", borderRadius: 8 }}>
         <div>Текущая цена: <b>{data.lot.current_price} ₽</b></div>
