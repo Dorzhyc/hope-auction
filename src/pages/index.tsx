@@ -24,30 +24,40 @@ export default function Home() {
       <h2>Лоты</h2>
       {!data ? <p>Загрузка...</p> : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 12 }}>
-          {data.lots.map((lot: any) => (
-            <Link key={lot.id} href={`/lots/${lot.id}`} style={{ textDecoration: "none", color: "inherit" }}>
-              <div style={{ border: "1px solid #ddd", borderRadius: 10, padding: 12 }}>
- {lot.images && (
-        <img
-          src={lot.images}
-          alt={lot.title}
-          style={{
-            width: "100%",
-            height: 160,
-            objectFit: "cover",
-            borderRadius: 8,
-            marginBottom: 8
-          }}
-        />
-      )}
-                
-                <div style={{ fontWeight: 700, marginBottom: 8 }}>{lot.title}</div>
-                <div>Текущая цена: <b>{lot.current_price} ₽</b></div>
-                <div>Ставок: <b>{lot.bids_count}</b></div>
-                <div>Статус: {lot.status === "ended" ? "завершён" : (lot.status === "hidden" ? "скрыт" : "активен")}</div>
-              </div>
-            </Link>
-          ))}
+         {data.lots.map((lot: any) => {
+  const firstImage = lot.images
+    ? String(lot.images).split("\n")[0]
+    : null;
+
+  return (
+    <Link
+      key={lot.id}
+      href={`/lots/${lot.id}`}
+      style={{ textDecoration: "none", color: "inherit" }}
+    >
+      <div style={{ border: "1px solid #ddd", borderRadius: 10, padding: 12 }}>
+        {firstImage && (
+          <div style={{ marginBottom: 8 }}>
+            <img
+              src={firstImage}
+              alt={lot.title}
+              style={{
+                width: "100%",
+                maxHeight: 220,
+                objectFit: "cover",
+                borderRadius: 8,
+              }}
+            />
+          </div>
+        )}
+        <div style={{ fontWeight: 700, marginBottom: 8 }}>{lot.title}</div>
+        <div>Текущая цена: <b>{lot.current_price} ₽</b></div>
+        <div>Ставок: <b>{lot.bids_count}</b></div>
+        <div>Статус: {lot.status === "ended" ? "завершён" : (lot.status === "hidden" ? "скрыт" : "активен")}</div>
+      </div>
+    </Link>
+  );
+})}
         </div>
       )}
 
