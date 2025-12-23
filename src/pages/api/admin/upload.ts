@@ -65,21 +65,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const pub = supabaseAdmin.storage.from(SUPABASE_BUCKET).getPublicUrl(path);
     const url = pub.data.publicUrl;
-    const pool = getPool();
-const lotIdNum = Number(lotId);
+ const pool = getPool();
 
+// сохраняем ссылку на фото в таблицу lots
 await pool.query(
-  `
-  UPDATE lots
-  SET images = 
-    CASE 
-      WHEN images IS NULL OR images = '' THEN $2
-      ELSE images || E'\n' || $2
-    END
-  WHERE id = $1
-  `,
-  [lotIdNum, url]
+  `UPDATE lots
+   SET images = $1, updated_at = now()
+   WHERE id = $2`,
+  [url, Number(lotId)]
 );
+
 
 return res.status(200).json({ ok: true, url, path });
 
@@ -89,5 +84,6 @@ return res.status(200).json({ ok: true, url, path });
     return res.status(500).json({ error: e?.message ?? String(e) });
   }
 }
+
 
 
