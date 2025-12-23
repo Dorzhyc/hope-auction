@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const pool = getPool();
 
   const lotR = await pool.query(`
-    SELECT id, title, description, start_price, current_price, bids_count, status,
+    SELECT id, title, description, start_price, current_price, bids_count, status, images,
            winner_nickname, winning_amount,
            (SELECT created_at FROM bids WHERE id = lots.winning_bid_id) AS winning_time
     FROM lots
