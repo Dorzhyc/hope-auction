@@ -60,9 +60,10 @@ export default function Home() {
 })}
         </div>
       )}
-
-      <hr style={{ margin: "24px 0" }} />
-      <Link href="/admin">Админ</Link>
+{/*
+<hr style={{ margin: "24px 0" }} />
+<Link href="/admin">Админ</Link>
+*/}
     </main>
   );
 }
