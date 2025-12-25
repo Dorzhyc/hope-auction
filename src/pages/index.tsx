@@ -10,9 +10,49 @@ export default function Home() {
   return (
     <main style={{ maxWidth: 980, margin: "0 auto", padding: 16, fontFamily: "system-ui" }}>
       <h1>Аукцион «Создавая надежду»</h1>
-      <p>
-        Благотворительная выставка совместно с арт-агентством «Переход» и фондом СПИД.ЦЕНТР.
-      </p>
+     <p style={{ lineHeight: 1.6 }}>
+  Благотворительная выставка совместно с{" "}
+  <a
+    href="https://perehodart.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    арт-агентством «Переход»
+  </a>{" "}
+  и{" "}
+  <a
+    href="https://spid.center/ru/about"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Фондом СПИД.ЦЕНТР
+  </a>
+  .
+</p>
+
+<a
+  href="https://spid.center/ru/help"
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 12,
+    padding: "10px 18px",
+    borderRadius: 9999, // гиперовальная форма
+    backgroundColor: "#e30613",
+    color: "#ffffff",
+    fontFamily: "Gerbera, system-ui, -apple-system, BlinkMacSystemFont",
+    fontSize: 14,
+    fontWeight: 600,
+    textDecoration: "none",
+  }}
+>
+  Поддержать фонд
+  <span style={{ fontSize: 16, lineHeight: 1 }}>→</span>
+</a>
+
 
       {auction && (
         <div style={{ padding: 12, border: "1px solid #ddd", borderRadius: 8, marginBottom: 16 }}>
