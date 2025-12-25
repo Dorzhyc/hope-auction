@@ -60,10 +60,20 @@ export default function Home() {
 })}
         </div>
       )}
-{/*
-<hr style={{ margin: "24px 0" }} />
-<Link href="/admin">Админ</Link>
-*/}
+
+      <hr style={{ margin: "24px 0" }} />
+
+      <div style={{ fontSize: 14, color: "#555" }}>
+        <Link href="/privacy">Политика конфиденциальности</Link>
+        {" · "}
+        <Link href="/offer">Публичная оферта</Link>
+      </div>
+
+      <div style={{ fontSize: 12, color: "#777", marginTop: 8 }}>
+        Используя сайт, вы соглашаетесь с использованием cookies.
+      </div>
+
+
     </main>
   );
 }
