@@ -9,9 +9,9 @@ export default function Home() {
 
   return (
     <main style={{ maxWidth: 980, margin: "0 auto", padding: 16, fontFamily: "system-ui" }}>
-      <h1>Аукцион «Создавая надежду»</h1>
+      <h1>Благотворительный аукцион «Создавая надежду»</h1>
      <p style={{ lineHeight: 1.6 }}>
-  Благотворительная выставка совместно с{" "}
+  По итогам выставки организованной совместно с{" "}
   <a
     href="https://perehodart.com/"
     target="_blank"
@@ -27,7 +27,8 @@ export default function Home() {
   >
     Фондом СПИД.ЦЕНТР
   </a>
-  .
+  . Часть вырученных средств будет направлена на поддержку программ по борьбе 
+  с эпидемией ВИЧ и помощь людям, живущим с ВИЧ.
 </p>
 
 <a
@@ -114,6 +115,24 @@ export default function Home() {
         Используя сайт, вы соглашаетесь с использованием cookies.
       </div>
 
+<hr style={{ margin: "32px 0" }} />
+
+<div style={{ fontSize: 14, lineHeight: 1.6 }}>
+  <div>
+    <b>Контакты:</b>{" "}
+    <a href="mailto:events@spid.center">events@spid.center</a>
+  </div>
+  <div>
+    <b>Telegram:</b>{" "}
+    <a
+      href="https://t.me/AIDS_help"
+      target="_blank"
+      rel="noreferrer"
+    >
+      @AIDS_help
+    </a>
+  </div>
+</div>
 
     </main>
   );
