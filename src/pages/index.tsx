@@ -39,6 +39,7 @@ export default function Home() {
     alignItems: "center",
     gap: 8,
     marginTop: 12,
+     marginBottom: 16,
     padding: "10px 18px",
     borderRadius: 9999, // гиперовальная форма
     backgroundColor: "#e30613",
