@@ -21,7 +21,7 @@ export default function Home() {
   </a>{" "}
   и{" "}
   <a
-    href="https://spid.center/ru/about"
+    href="https://spid.center/ru/articles/5470"
     target="_blank"
     rel="noopener noreferrer"
   >
