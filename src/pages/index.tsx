@@ -4,8 +4,8 @@ import Link from "next/link";
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export default function Home() {
-  const { data: auction } = useSWR("/api/auction", fetcher);
-  const { data } = useSWR("/api/lots", fetcher);
+  const { data: auction } = useSWR("/api/auction", fetcher, { refreshInterval: 10000});
+  const { data } = useSWR("/api/lots", fetcher,  { refreshInterval: 10000});
 
   return (
     <main style={{ maxWidth: 980, margin: "0 auto", padding: 16, fontFamily: "system-ui" }}>
